@@ -14,7 +14,9 @@ namespace DrawButtons
     {
         private int MouseDownX;
         private int MouseDownY;
-        private int NumButton = 1;              
+        private int NumButton = 1;
+        Button button1;
+        bool drawing = false;
 
         public Form1()
         {
@@ -25,43 +27,49 @@ namespace DrawButtons
         {
             MouseDownX = e.X;
             MouseDownY = e.Y;
+            button1 = new Button();
+            button1.Parent = this;
+            button1.Text = "Buttot" + NumButton++;
+            drawing = true;            
         }
 
         private void Form1_MouseUp(object sender, MouseEventArgs MouseUp)
         {
-            if (Math.Abs(MouseUp.X - MouseDownX) >= 30 && Math.Abs(MouseUp.Y - MouseDownY) >= 20)
+            drawing = false;
+            if (Math.Abs(MouseUp.X - MouseDownX) < 30 || Math.Abs(MouseUp.Y - MouseDownY) < 20)
             {
-                var button1 = new Button();
-                button1.Parent = this;
-                button1.Text = "Buttot" + NumButton++;
-                button1.Width = Math.Abs(MouseUp.X - MouseDownX);
-                button1.Height = Math.Abs(MouseUp.Y - MouseDownY);
-                if (MouseUp.X - MouseDownX > 0)
-                {           
-                    if (MouseUp.Y - MouseDownY < 0)
-                    {
-                        MouseDownY = MouseUp.Y;
-                    }                    
-                }
-                else
-                {
-                    MouseDownX = MouseUp.X;
-                    if ((MouseUp.Y - MouseDownY) < 0)
-                    {
-                        MouseDownY = MouseUp.Y;
-                    }
-                }                
-                button1.Location = new Point(MouseDownX, MouseDownY);                
-            }
-            else
-            {
+                NumButton--;
+                this.Controls.Remove(button1);
                 MessageBox.Show("Button size too small", "Error", MessageBoxButtons.OK, MessageBoxIcon.Error);
-            }
+            }            
         }
 
         private void Form1_MouseMove(object sender, MouseEventArgs e)
         {
-          
+            if (!drawing) return;                   
+
+            button1.Width = Math.Abs(e.X - MouseDownX);
+            button1.Height = Math.Abs(e.Y - MouseDownY);
+
+            int TempX = MouseDownX;
+            int TempY = MouseDownY;
+
+            if (e.X - MouseDownX > 0)
+            {
+                if (e.Y - MouseDownY < 0)
+                {
+                    TempY = e.Y;
+                }                
+            }
+            else
+            {
+                TempX = e.X;
+                if ((e.Y - MouseDownY) < 0)
+                {
+                    TempY = e.Y;
+                }                
+            }
+            button1.Location = new Point(TempX, TempY);
         }
     }
 }
